@@ -4,9 +4,9 @@ import Footer from "./Shared/Footer/Footer";
 
 function App() {
   return (
-    <div className="mt-1 mx-4 border min-h-screen">
+    <div className="mt-1 mx-4">  
       <MyNavbar></MyNavbar>
-      <div>
+      <div className="min-h-[86vh]">
         <Outlet></Outlet>
       </div>
       <Footer></Footer>
