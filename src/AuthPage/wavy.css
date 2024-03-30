@@ -1,0 +1,23 @@
+.bg-wavy {
+  background-color: #b2b377;
+  opacity: 0.6;
+  background-image: repeating-radial-gradient(
+      circle at 0 0,
+      transparent 0,
+      #b2b377 40px
+    ),
+    repeating-linear-gradient(#d2d18055, #d2d180);
+
+}
+
+.bg-wavy2 {
+  background-color: #b2b377;
+  opacity: 0.6;
+  background-image: repeating-radial-gradient(
+      circle at 100% 0,
+      transparent 0,
+      #b2b377 40px
+    ),
+    repeating-linear-gradient(#d2d18055, #d2d180);
+
+}
