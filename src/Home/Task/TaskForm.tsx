@@ -27,7 +27,7 @@ const TaskForm = () => {
         </Form.Item>
 
         <div className="flex justify-center">
-          <Button htmlType="submit">Add</Button>
+          <Button htmlType="submit" className="bg-blue-200 text-blue-800 font-roboto-slab font-semibold px-10 " >Add</Button>
         </div>
       </Form>
     </Card>
