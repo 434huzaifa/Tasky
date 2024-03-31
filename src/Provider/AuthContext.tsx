@@ -22,6 +22,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     return signInWithPopup(auth, googleProvider);
   };
+  
   const createUser = (
     email: string,
     password: string
@@ -43,6 +44,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       (currentUser) => {
         if (currentUser && currentUser.email) {
           setUser(currentUser);
+          
         } 
         setLoading(false);
       },
@@ -62,7 +64,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     createUser,
     googleSignIn,
     user,
-    loading
+    loading,
+    setUser,
+    setLoading
   };
 
   return (

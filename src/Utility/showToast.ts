@@ -4,7 +4,7 @@ import "sweetalert2/dist/sweetalert2.min.css";
 const showToast = (icon:SweetAlertIcon , title:string ) => {
     const Toast = Swal.mixin({
         toast: true,
-        position: "top-left",
+        position: "bottom-end",
         showConfirmButton: false,
         timer: 2000,
         showCloseButton: true,
@@ -13,10 +13,7 @@ const showToast = (icon:SweetAlertIcon , title:string ) => {
           toast.addEventListener("mouseenter", Swal.stopTimer);
           toast.addEventListener("mouseleave", Swal.resumeTimer);
         },
-        customClass: {
-          title: "dark:text-dw",
-          timerProgressBar: "dark:bg-dt",
-        },
+
       });
       Toast.fire({
         icon: icon,
