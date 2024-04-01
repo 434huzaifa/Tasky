@@ -52,12 +52,11 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     await setLoading(value)
   }
   useEffect(() => {
-    console.log("UseEffect");
     const unSubscribe = onAuthStateChanged(
       auth,
       (currentUser) => {
+        setUser(currentUser);
         if (currentUser && currentUser.email) {
-          setUser(currentUser);
           assignJWT(currentUser.email)
             .then(() => {})
             .catch(async (err) => {

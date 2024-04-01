@@ -5,6 +5,7 @@ import TaskForm from "./Task/TaskForm";
 import TodoDiv from "./Task/TodoDiv";
 const Home = () => {
     const [refetcher,setRefetcher]=useState<string|boolean>()
+    console.log("~ setRefetcher", setRefetcher)
   return (
     <div className="flex flex-col gap-7 mt-4">
       <TaskForm ></TaskForm>

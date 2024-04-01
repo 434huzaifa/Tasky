@@ -9,33 +9,69 @@ import { Doc, UpdateDoc } from "./AllTypes";
 import useAxios from "../../Hook/useAxios";
 import { useMutation } from "@tanstack/react-query";
 import showToast from "../../Utility/showToast";
+import SuccessResponse from "../../Utility/SuccessResponse";
+import ErrorResponse from "../../Utility/ErrorResponse";
+import { AxiosError } from "axios";
 type Props = {
   doc?: Doc;
   type?: "todo" | "in-progress" | "completed";
-  setRefetcher:React.Dispatch<React.SetStateAction<string | boolean | undefined>>
+  setRefetcher: React.Dispatch<
+    React.SetStateAction<string | boolean | undefined>
+  >;
 };
 
-const TaskCard = ({ doc, type = "todo",setRefetcher }: Props) => {
+const TaskCard = ({ doc, type = "todo", setRefetcher }: Props) => {
   const caxios = useAxios();
   const mutationTaskUpdate = useMutation({
-    mutationFn: async ({ id, who }: { id: string; who: "in-progress"|"completed" }) => {
+    mutationFn: async ({
+      id,
+      who,
+    }: {
+      id: string;
+      who: "in-progress" | "completed";
+    }) => {
       const data: UpdateDoc = {};
       if (who == "in-progress") {
         data.status = "in-progress";
-        data.startDate=dayjs().format("DD-MM-YY hh:mm:ss A")
-        setRefetcher("in-progress")
-      }else if(who=="completed"){
+        data.startDate = dayjs().format("DD-MM-YY hh:mm:ss A");
+        setRefetcher("in-progress");
+      } else if (who == "completed") {
         data.status = "completed";
-        data.completeDate=dayjs().format("DD-MM-YY hh:mm:ss A")
-        setRefetcher("completed")
+        data.completeDate = dayjs().format("DD-MM-YY hh:mm:ss A");
+        setRefetcher("completed");
       }
-      if (Object.keys(data).length!=0) {
-        const res = await caxios.patch(`/tasks/${id}`, data);
+      if (Object.keys(data).length != 0) {
+        const res = await caxios.patch(`/task/${id}`, data);
         return res.data;
-      }else{
+      } else {
         throw "Empty Body";
       }
     },
+    onSuccess: (data) => {
+      SuccessResponse(data);
+    },
+    onError: (err: AxiosError) => {
+      ErrorResponse(err);
+    },
+    retry: 2,
+  });
+  const mutationDelete = useMutation({
+    mutationFn: async (id: string | undefined) => {
+      if (id) {
+        const res = await caxios.delete(`/task/${id}`);
+        setRefetcher(type);
+        return res.data;
+      } else {
+        throw "Undefine Id";
+      }
+    },
+    onSuccess: (data) => {
+      SuccessResponse(data);
+    },
+    onError: (err: AxiosError) => {
+      ErrorResponse(err);
+    },
+    retry: 2,
   });
   let cardstyle = "";
   if (type == "todo") {
@@ -45,21 +81,22 @@ const TaskCard = ({ doc, type = "todo",setRefetcher }: Props) => {
   } else {
     cardstyle = "bg-cyan-200";
   }
-  const confirm = (id: string | undefined) => {
+  const confirm = async (id: string | undefined) => { // work here
+    await mutationDelete.mutateAsync(id);
     console.log(id);
   };
-  async function handelInProgress(id:string|undefined) {
+  async function handelInProgress(id: string | undefined) {
     if (id) {
-      await mutationTaskUpdate.mutateAsync({id:id,who:"in-progress"})
-    }else{
-      showToast("error","Id not found")
+      await mutationTaskUpdate.mutateAsync({ id: id, who: "in-progress" });
+    } else {
+      showToast("error", "Id not found");
     }
   }
-  async function handelCompleted(id:string|undefined) {
+  async function handelCompleted(id: string | undefined) {
     if (id) {
-      await mutationTaskUpdate.mutateAsync({id:id,who:"completed"})
-    }else{
-      showToast("error","Id not found")
+      await mutationTaskUpdate.mutateAsync({ id: id, who: "completed" });
+    } else {
+      showToast("error", "Id not found");
     }
   }
   return (
@@ -72,9 +109,14 @@ const TaskCard = ({ doc, type = "todo",setRefetcher }: Props) => {
                 Started at {doc?.startDate}{" "}
               </p>
             ) : type == "completed" ? (
-              <p className="bg-green-200 text-green-600 rounded-md inline-block p-1 text-xs t">
-                Completed at {doc?.completeDate}{" "}
-              </p>
+              <div className="flex gap-3">
+                <p className="bg-green-200 text-green-600 rounded-md inline-block p-1 text-xs t">
+                  Started at {doc?.startDate}{" "}
+                </p>
+                <p className="bg-green-200 text-green-600 rounded-md inline-block p-1 text-xs t">
+                  Completed at {doc?.completeDate}{" "}
+                </p>
+              </div>
             ) : null}
           </div>
 
@@ -89,13 +131,23 @@ const TaskCard = ({ doc, type = "todo",setRefetcher }: Props) => {
         {type == "todo" ? (
           <Tooltip title="Move to in progress">
             {" "}
-            <div className="border-l px-4 hover:cursor-pointer" onClick={()=>{handelInProgress(doc?._id)}}>
+            <div
+              className="border-l px-4 hover:cursor-pointer"
+              onClick={() => {
+                handelInProgress(doc?._id);
+              }}
+            >
               <TbClockDown className="text-3xl text-center text-blue-500" />
             </div>
           </Tooltip>
         ) : type == "in-progress" ? (
           <Tooltip title="Move to complete">
-            <div className="border-l px-4 hover:cursor-pointer" onClick={()=>{handelCompleted(doc?._id)}}>
+            <div
+              className="border-l px-4 hover:cursor-pointer"
+              onClick={() => {
+                handelCompleted(doc?._id);
+              }}
+            >
               <TbClockCheck className="text-3xl text-center text-blue-500 hover:cursor-pointer" />
             </div>
           </Tooltip>
@@ -107,7 +159,7 @@ const TaskCard = ({ doc, type = "todo",setRefetcher }: Props) => {
             okText="Yes"
             cancelText="No"
             onConfirm={() => {
-              confirm(doc?._id);
+              confirm(doc?._id,type);
             }}
             okButtonProps={{ loading: false }}
             icon={<MdDelete className="text-red-500 text-lg" />}

@@ -30,7 +30,7 @@ const CompleteDiv = ({refetcher,setRefetcher}:Props) => {
         await setLimit(pageSize);
         queryCompleted.refetch();
       }
-  if (refetcher=="complete") {
+  if (refetcher=="complete") {  
     queryCompleted.refetch();
   }
   return (
@@ -42,7 +42,7 @@ const CompleteDiv = ({refetcher,setRefetcher}:Props) => {
     >
       <div>
         <p className="text-xl underline underline-offset-8 font-roboto-slab font-bold text-center">
-          Todo
+          Completed
         </p>
         <div>
           {queryCompleted.isSuccess ? (
