@@ -13,7 +13,7 @@ import ErrorResponse from "../Utility/ErrorResponse";
 import { AxiosError } from "axios";
 const Login = () => {
   const navigate = useNavigate();
-  const { signIn, googleSignIn, setLoading } = useAuth();
+  const { signIn, googleSignIn, changeLoading,assignJWT,logOut } = useAuth();
   const caxios = useAxios();
   const mutationUserCreateOrCheck = useMutation({
     mutationFn: async (data: { email: string; name: string }) => {
@@ -21,11 +21,12 @@ const Login = () => {
       return res.data;
     },
     onSuccess: (data) => {
+      changeLoading(false);
       SuccessResponse(data);
-      setLoading(false);
-      navigate("/");
+      navigate("/");      
     },
     onError: (err: AxiosError) => {
+      changeLoading(false)
       ErrorResponse(err);
     },
   });
@@ -37,12 +38,24 @@ const Login = () => {
             email: res.user.email,
             name: res.user.displayName,
           });
+          assignJWT(res.user.email).then(()=>{
+            changeLoading(false);
+          }).catch(async (err:any) => {
+            await logOut();
+            changeLoading(false);
+            console.log("assignJWT~", err);
+            console.log(err.message);
+            navigate("/login")
+          })
         }
+        
       })
       .catch((err: any) => {
         console.log(err);
-        showToast("error", "Login Failed");
+        changeLoading(false)
+        showToast("error", err.message);
       });
+      
   }
   function handelGoogleLogin() {
     googleSignIn()
@@ -52,12 +65,22 @@ const Login = () => {
             email: res.user.email,
             name: res.user.displayName,
           });
+          assignJWT(res.user.email).then(()=>{
+            changeLoading(false);
+          }).catch(async (err:any) => {
+            await logOut();
+            changeLoading(false);
+            console.log("assignJWT~", err);
+            navigate("/login")
+          })
         }
       })
       .catch((err: any) => {
         console.log(err);
-        showToast("error", "Login Failed");
+        changeLoading(false);
+        showToast("error", err.message);
       });
+      
   }
   return (
     <div className=" justify-center flex items-center min-h-screen bg-wavy">

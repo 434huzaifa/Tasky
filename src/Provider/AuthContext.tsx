@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ReactNode, useState, createContext, useEffect } from 'react';
+import { ReactNode, useState, createContext, useEffect } from "react";
 import {
   GoogleAuthProvider,
   UserCredential,
@@ -9,20 +9,22 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signInWithPopup,
-  signOut, 
+  signOut,
 } from "firebase/auth";
 import app from "../Firebase/firebase.config";
+import useAxios from "../Hook/useAxios";
 export const AuthContext = createContext<any>(null);
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const caxios = useAxios();
   const googleSignIn = () => {
     setLoading(true);
     return signInWithPopup(auth, googleProvider);
   };
-  
+
   const createUser = (
     email: string,
     password: string
@@ -38,14 +40,39 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     return signInWithEmailAndPassword(auth, email, password);
   };
+  const assignJWT = (email: string) => {
+    setLoading(true);
+    return caxios.post("/jsonwebtoken", { email });
+  };
+  const logoutJWT = () => {
+    setLoading(true);
+    return caxios.post("/logout");
+  };
+  const changeLoading=async (value:boolean)=>{
+    await setLoading(value)
+  }
   useEffect(() => {
+    console.log("UseEffect");
     const unSubscribe = onAuthStateChanged(
       auth,
       (currentUser) => {
         if (currentUser && currentUser.email) {
           setUser(currentUser);
-          
-        } 
+          assignJWT(currentUser.email)
+            .then(() => {})
+            .catch(async (err) => {
+              await logOut();
+              setLoading(false);
+              console.log("assignJWT~", err);
+              window.location.href="/login"
+            });
+        } else {
+          logoutJWT()
+            .then()
+            .catch((err) => {
+              console.log("logoutJWT~", err);
+            });
+        }
         setLoading(false);
       },
       (error) => {
@@ -66,7 +93,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     user,
     loading,
     setUser,
-    setLoading
+    changeLoading,
+    assignJWT,
+    logoutJWT
   };
 
   return (
