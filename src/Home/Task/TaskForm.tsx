@@ -1,4 +1,9 @@
+import { useMutation } from "@tanstack/react-query";
 import { Button, Card, Form, Input } from "antd";
+import useAxios from "../../Hook/useAxios";
+import SuccessResponse from "../../Utility/SuccessResponse";
+import ErrorResponse from "../../Utility/ErrorResponse";
+import { AxiosError } from "axios";
 
 type FormDataType = {
   title: string;
@@ -6,13 +11,29 @@ type FormDataType = {
 };
 
 const TaskForm = () => {
-  const mutateInsertTask
-  function onFinish(values: FormDataType) {
-    console.log(values);
+  const [form] = Form.useForm();
+  const caxios=useAxios()
+  const mutateInsertTask=useMutation({
+    mutationFn:async(data:FormDataType)=>{
+      const res= await caxios.post("/task",data)
+      return res.data
+    },
+    onSuccess:(data)=>{
+      SuccessResponse(data)
+    },
+    onError:(err:AxiosError)=>{
+      ErrorResponse(err)
+    },
+
+  })
+  async function onFinish(values: FormDataType) {
+    await mutateInsertTask.mutateAsync(values)
+    form.resetFields()
+    
   }
   return (
     <Card>
-      <Form layout="vertical" onFinish={onFinish}>
+      <Form layout="vertical" onFinish={onFinish} form={form}>
         <Form.Item
           name="title"
           label="Title"

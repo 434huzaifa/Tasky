@@ -1,18 +1,19 @@
-import { Card, Tooltip } from "antd";
+import { Card, Popconfirm, Tooltip } from "antd";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { TbClockDown } from "react-icons/tb";
 import { FaPen } from "react-icons/fa";
 import { TbClockCheck } from "react-icons/tb";
 import dayjs from "dayjs";
+import { MdDelete } from "react-icons/md";
+import { Doc } from "./AllTypes";
 type Props = {
-  title?: string;
-  description?: string;
+  doc?:Doc
   type?: "todo" | "in-progress" | "completed";
+
 };
 
 const TaskCard = ({
-  title = "Title here",
-  description = "This is description...",
+  doc,
   type = "todo",
 }: Props) => {
   let cardstyle=""
@@ -23,6 +24,10 @@ const TaskCard = ({
     }else{
         cardstyle="bg-cyan-200"
     }
+    const confirm = (id:string|undefined) => {
+      console.log(id);
+    };
+
   return (
     <Card className={`font-roboto-slab mt-4 ${cardstyle}`}>
       <div className="flex items-center">
@@ -39,8 +44,8 @@ const TaskCard = ({
             ) : null}
           </div>
 
-          <p className="text-lg  font-bold">{title}</p>
-          <p className="font-semibold">{description}</p>
+          <p className="text-lg  font-bold">{doc?.title || ""}</p>
+          <p className="font-semibold">{doc?.description|| ""}</p>
         </div>
         <Tooltip title="Edit">
           <div className=" px-4 hover:cursor-pointer">
@@ -62,9 +67,19 @@ const TaskCard = ({
           </Tooltip>
         ) : null}
         <Tooltip title="Delete">
+          <Popconfirm
+          title="Delete"
+          description="Are you sure to delete this task?"
+          okText="Yes"
+          cancelText="No"
+          onConfirm={()=>{confirm(doc?._id)}}
+          okButtonProps={{ loading: false }}
+          icon={<MdDelete className="text-red-500 text-lg"/>}
+          >
           <div className="border-l px-4 hover:cursor-pointer">
             <MdOutlineDeleteOutline className="text-3xl text-center text-red-500" />
           </div>
+          </Popconfirm>
         </Tooltip>
       </div>
     </Card>

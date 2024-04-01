@@ -2,9 +2,9 @@
 import { AxiosError } from "axios";
 import showToast from "./showToast"
 const ErrorResponse = (err:AxiosError) => {
-    const msg=err?.response?.data as any
-    if (msg) {
-        showToast("error",msg)
+    const data=err?.response?.data as any
+    if (data) {
+        showToast("error",data.msg)
        }else{
         showToast("error","Something wrong")
        }
