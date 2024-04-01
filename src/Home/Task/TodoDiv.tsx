@@ -5,7 +5,11 @@ import { useQuery } from "@tanstack/react-query";
 import useAxios from "../../Hook/useAxios";
 import { useState } from "react";
 import { Response } from "./AllTypes";
-const TodoDiv = () => {
+type Props={
+  refetcher:string | boolean | undefined
+  setRefetcher:React.Dispatch<React.SetStateAction<string | boolean | undefined>>
+}
+const TodoDiv = ({refetcher,setRefetcher}:Props) => {
   const { user } = useAuth();
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(5);
@@ -21,6 +25,9 @@ const TodoDiv = () => {
     refetchOnWindowFocus: false,
     retry: 2,
   });
+  if (refetcher=="todo") {
+    queryTodo.refetch()
+  }
   async function onChange(page: number, pageSize: number) {
     await setPage(page);
     await setLimit(pageSize);
@@ -42,7 +49,7 @@ const TodoDiv = () => {
           {queryTodo.isSuccess ? (
             queryTodo.data.docs.length != 0 ? (
               queryTodo.data.docs.map((x) => {
-                return <TaskCard doc={x} type={"todo"}></TaskCard>;
+                return <TaskCard setRefetcher={setRefetcher} doc={x} type={"todo"}></TaskCard>;
               })
             ) : (
               <Empty></Empty>

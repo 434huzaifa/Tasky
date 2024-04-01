@@ -23,3 +23,11 @@ export interface Response {
   prevPage: null | number;
   nextPage: null | number;
 }
+
+export interface UpdateDoc {
+  status?: string;
+  title?: string;
+  description?: string;
+  startDate?: string ;
+  completeDate?: string;
+}

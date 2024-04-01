@@ -1,8 +1,15 @@
 import { Card, Pagination } from "antd";
 import TaskCard from "./TaskCard";
-const InProgressDiv = () => {
+type Props={
+  refetcher:string | boolean | undefined
+  setRefetcher:React.Dispatch<React.SetStateAction<string | boolean | undefined>>
+}
+const InProgressDiv = ({refetcher,setRefetcher}:Props) => {
   function onChange(value: number) {
     console.log(value);
+  }
+  if (refetcher=="in-progress") {
+    console.log("in-progress");
   }
   return (
     <Card className="bg-blue-100">
@@ -11,7 +18,7 @@ const InProgressDiv = () => {
           In Progress
         </p>
         <div>
-          <TaskCard type="in-progress"></TaskCard>
+          <TaskCard setRefetcher={setRefetcher} type="in-progress"></TaskCard>
         </div>
       </div>
       <div className="flex justify-end mt-2">
