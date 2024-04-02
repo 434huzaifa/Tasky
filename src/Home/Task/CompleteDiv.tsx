@@ -6,7 +6,7 @@ import { useQueryCompleted } from "./AllQuery";
 const CompleteDiv = () => {
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(5);
-  const queryCompleted = useQueryCompleted(page, limit);
+  const queryCompleted = useQueryCompleted(limit,page);
   async function onChange(page: number, pageSize: number) {
     await setPage(page);
     await setLimit(pageSize);
@@ -40,15 +40,18 @@ const CompleteDiv = () => {
         </div>
       </div>
       <div className="flex justify-end mt-2">
-        <Pagination
-          current={page}
-          onChange={onChange}
-          size="small"
-          total={queryCompleted.data?.totalDocs}
-          defaultPageSize={5}
-          pageSize={limit}
-          showSizeChanger
-        ></Pagination>
+
+        {queryCompleted.isSuccess && queryCompleted.data.docs.length != 0 && (
+          <Pagination
+            current={page}
+            onChange={onChange}
+            size="small"
+            total={queryCompleted.data?.totalDocs}
+            defaultPageSize={5}
+            pageSize={limit}
+            showSizeChanger
+          ></Pagination>
+        )}
       </div>
     </Card>
   );

@@ -1,12 +1,24 @@
-import { Card, Empty, Pagination } from "antd";
+import { Card, Empty, Modal, Pagination } from "antd";
 import TaskCard from "./TaskCard";
 import { useState } from "react";
 import { useQueryTodo } from "./AllQuery";
+import { UpdateDoc } from "./AllTypes";
 
 const TodoDiv = () => {
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(5);
-  const queryTodo = useQueryTodo(page, limit);
+  const[isModalOpen,setIsModalOpen]=useState(false)
+  const [singleTask,setSingleTask]=useState<UpdateDoc>()
+  console.log("~ singleTask", singleTask)
+  function handelModal() {
+    setIsModalOpen(!isModalOpen)
+  }
+  function taskUpdater(task:UpdateDoc,id:string) {
+    setSingleTask(task)
+    console.log(id);
+    handelModal();
+  }
+  const queryTodo = useQueryTodo(limit,page);
   async function onChange(page: number, pageSize: number) {
     await setPage(page);
     await setLimit(pageSize);
@@ -14,6 +26,7 @@ const TodoDiv = () => {
   }
 
   return (
+    <>
     <Card
       className="bg-orange-100"
       loading={
@@ -28,7 +41,7 @@ const TodoDiv = () => {
           {queryTodo.isSuccess ? (
             queryTodo.data.docs.length != 0 ? (
               queryTodo.data.docs.map((x) => {
-                return <TaskCard doc={x} type={"todo"}></TaskCard>;
+                return <TaskCard taskUpdater={taskUpdater}doc={x} type={"todo"}></TaskCard>;
               })
             ) : (
               <Empty></Empty>
@@ -39,17 +52,26 @@ const TodoDiv = () => {
         </div>
       </div>
       <div className="flex justify-end mt-2">
-        <Pagination
-          current={page}
-          onChange={onChange}
-          size="small"
-          total={queryTodo.data?.totalDocs}
-          defaultPageSize={5}
-          pageSize={limit}
-          showSizeChanger
-        ></Pagination>
+      {queryTodo.isSuccess && queryTodo.data.docs.length != 0 && (
+          <Pagination
+            current={page}
+            onChange={onChange}
+            size="small"
+            total={queryTodo.data?.totalDocs}
+            defaultPageSize={5}
+            pageSize={limit}
+            showSizeChanger
+          ></Pagination>
+        )}
+
       </div>
     </Card>
+    <Modal
+    footer={null}
+    onCancel={handelModal}
+    open={isModalOpen}
+    ></Modal>
+    </>
   );
 };
 

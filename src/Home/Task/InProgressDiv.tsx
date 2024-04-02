@@ -6,7 +6,7 @@ import { useInProgress } from "./AllQuery";
 const InProgressDiv = () => {
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(5);
-    const queryInProgress = useInProgress(page, limit);
+    const queryInProgress = useInProgress(limit,page);
   async function onChange(page: number, pageSize: number) {
     await setPage(page);
     await setLimit(pageSize);

@@ -45,10 +45,10 @@ export const useTaskUpdate = () => {
       const data: UpdateDoc = {};
       if (who == "in-progress") {
         data.status = "in-progress";
-        data.startDate = dayjs().format("DD-MM-YY hh:mm:ss A");
+        data.startDate = dayjs().format("MMM DD, hh:mm:ss A");
       } else if (who == "completed") {
         data.status = "completed";
-        data.completeDate = dayjs().format("DD-MM-YY hh:mm:ss A");
+        data.completeDate = dayjs().format("MMM DD, hh:mm:ss A");
       }
       if (Object.keys(data).length != 0) {
         const res = await caxios.patch(`/task/${id}`, data);
