@@ -23,6 +23,20 @@ git clone https://github.com/434huzaifa/Tasky
 cd Tasky
 ```
 
+3. create `.env.local` file
+
+```
+# You can get these from firbase project
+VITE_APIKEY= 
+VITE_AUTH_DOMAIN= 
+VITE_PROJECT_ID= 
+VITE_STORAGE_BUCKET= 
+VITE_MESSAGING_SENDER_ID= 
+VITE_APP_ID=
+# Back end URL
+VITE_BACK_END_URL= http://localhost:3000
+```
+
 3. Install dependencies
 
 ```
@@ -37,3 +51,7 @@ npm run dev
 
 
 Enjoy
+
+live link: [https://tasky-one-tau.vercel.app/](https://tasky-one-tau.vercel.app/)
+
+Server Repo: [https://github.com/434huzaifa/Tasky-server](https://github.com/434huzaifa/Tasky-server)
