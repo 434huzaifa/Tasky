@@ -6,7 +6,7 @@ import { TbClockCheck } from "react-icons/tb";
 import { MdDelete } from "react-icons/md";
 import { Doc, UpdateDoc } from "./AllTypes";
 import showToast from "../../Utility/showToast";
-import { useTaskDelete, useTaskUpdate } from "./AllMutation";
+import { useTaskDelete, useTaskFullUpdate, useTaskUpdate } from "./AllMutation";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
@@ -21,6 +21,7 @@ type Props = {
 
 const TaskCard = ({ doc, type = "todo", taskUpdater }: Props) => {
   const mutationTaskUpdate = useTaskUpdate();
+  const mutateUpdater = useTaskFullUpdate();
   const mutationDelete = useTaskDelete(type);
   function handelEdit() {
     taskUpdater(
@@ -121,13 +122,15 @@ const TaskCard = ({ doc, type = "todo", taskUpdater }: Props) => {
           </div>
           <div className="flex justify-center items-center">
           <Tooltip title="Edit">
+            <Spin spinning={mutateUpdater.isPending}>
             <div className="hover:cursor-pointer border-r pr-3" onClick={handelEdit}>
               <FaPen className="text-2xl text-center text-yellow-500" />
-            </div>
+            </div></Spin>
           </Tooltip>
           {type == "todo" ? (
             <Tooltip title="Move to in progress">
               {" "}
+              <Spin spinning={mutationTaskUpdate.isPending}>
               <div
                 className="px-3 hover:cursor-pointer"
                 onClick={() => {
@@ -135,10 +138,11 @@ const TaskCard = ({ doc, type = "todo", taskUpdater }: Props) => {
                 }}
               >
                 <TbClockBolt className="text-3xl text-center text-blue-500" />
-              </div>
+              </div></Spin>
             </Tooltip>
           ) : type == "in-progress" ? (
             <Tooltip title="Move to complete">
+              <Spin spinning={mutationTaskUpdate.isPending}>
               <div
                 className="hover:cursor-pointer  px-3 "
                 onClick={() => {
@@ -147,6 +151,7 @@ const TaskCard = ({ doc, type = "todo", taskUpdater }: Props) => {
               >
                 <TbClockCheck className="text-3xl text-center text-blue-500 hover:cursor-pointer" />
               </div>
+              </Spin>
             </Tooltip>
           ) : null}
           <Tooltip title="Delete">
