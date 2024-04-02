@@ -4,7 +4,7 @@ import ErrorResponse from "../../Utility/ErrorResponse";
 import { AxiosError } from "axios";
 import { useInProgress, useQueryCompleted, useQueryTodo } from "./AllQuery";
 import { useMutation } from "@tanstack/react-query";
-import { UpdateDoc } from "./AllTypes";
+import { UpdateDoc } from './AllTypes';
 import dayjs from "dayjs";
 export type FormDataType = {
   title: string;
@@ -45,10 +45,10 @@ export const useTaskUpdate = () => {
       const data: UpdateDoc = {};
       if (who == "in-progress") {
         data.status = "in-progress";
-        data.startDate = dayjs().format("MMM DD, hh:mm:ss A");
+        data.startDate = dayjs().format();
       } else if (who == "completed") {
         data.status = "completed";
-        data.completeDate = dayjs().format("MMM DD, hh:mm:ss A");
+        data.completeDate = dayjs().format();
       }
       if (Object.keys(data).length != 0) {
         const res = await caxios.patch(`/task/${id}`, data);
@@ -78,6 +78,34 @@ export const useTaskUpdate = () => {
     },
   });
 };
+
+export const useTaskFullUpdate=()=>{
+  const caxios = useAxios();
+  const queryTodo = useQueryTodo(5, 1, false);
+  const querInProgress = useInProgress(5, 1, false);
+  const queryCompleted = useQueryCompleted(5, 1, false);
+  return useMutation({
+    mutationFn:async ({id,UpdateDoc,type}:{id:string|undefined,UpdateDoc:UpdateDoc,type:string})=>{
+      type
+      const res= await caxios.put(`/task/${id}`,UpdateDoc)
+      return res.data
+    },
+    onSuccess:(data,variables)=>{
+      SuccessResponse(data)
+      if (variables.type=="todo") {
+        queryTodo.refetch()
+      }else if(variables.type=="in-progress"){
+        querInProgress.refetch()
+      }else if(variables.type=="completed"){
+        queryCompleted.refetch()
+      }
+    },
+    onError:(err:AxiosError)=>{
+      ErrorResponse(err)
+    }
+  })
+}
+
 
 export const useTaskDelete = (type: string) => {
   const caxios = useAxios();

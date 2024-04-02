@@ -1,21 +1,22 @@
-import { Card, Empty, Modal, Pagination } from "antd";
+import { Card, Empty, Pagination } from "antd";
 import TaskCard from "./TaskCard";
 import { useState } from "react";
 import { useQueryTodo } from "./AllQuery";
 import { UpdateDoc } from "./AllTypes";
+import Updater from "./Updater";
 
 const TodoDiv = () => {
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(5);
   const[isModalOpen,setIsModalOpen]=useState(false)
   const [singleTask,setSingleTask]=useState<UpdateDoc>()
-  console.log("~ singleTask", singleTask)
+  const [id,setId]=useState<string>()
   function handelModal() {
     setIsModalOpen(!isModalOpen)
   }
-  function taskUpdater(task:UpdateDoc,id:string) {
+  function taskUpdater(task:UpdateDoc,id:string|undefined) {
     setSingleTask(task)
-    console.log(id);
+    setId(id)
     handelModal();
   }
   const queryTodo = useQueryTodo(limit,page);
@@ -66,11 +67,7 @@ const TodoDiv = () => {
 
       </div>
     </Card>
-    <Modal
-    footer={null}
-    onCancel={handelModal}
-    open={isModalOpen}
-    ></Modal>
+    <Updater id={id} isModalOpen={isModalOpen} singleTask={singleTask} handelModal={handelModal}></Updater>
     </>
   );
 };

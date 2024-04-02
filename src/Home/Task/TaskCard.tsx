@@ -16,7 +16,7 @@ dayjs.extend(timezone);
 type Props = {
   doc?: Doc;
   type?: "todo" | "in-progress" | "completed";
-  taskUpdater?: (task: UpdateDoc, id: string) => void;
+  taskUpdater: (task: UpdateDoc, id: string|undefined) => void;
 };
 
 const TaskCard = ({ doc, type = "todo", taskUpdater }: Props) => {
@@ -75,7 +75,9 @@ const TaskCard = ({ doc, type = "todo", taskUpdater }: Props) => {
                   </p>
                   <p className="bg-cyan-200 text-cyan-600 rounded-md gap-1 px-1 text-xs flex items-center">
                     <TbClockBolt className="text-lg text-pink-500" />{" "}
-                    {doc?.startDate}{" "}
+                    {dayjs(doc?.startDate)
+                      .tz(dayjs.tz.guess())
+                      .format("MMM DD, hh:mm:ss A")}
                   </p>
                 </div>
               ) : type == "completed" ? (
@@ -84,15 +86,19 @@ const TaskCard = ({ doc, type = "todo", taskUpdater }: Props) => {
                     <TbClockPlus className="text-lg text-pink-500" />{" "}
                     {dayjs(doc?.createdAt)
                       .tz(dayjs.tz.guess())
-                      .format("DD-MM-YY hh:mm:ss A")}
+                      .format("MMM DD, hh:mm:ss A")}
                   </p>
                   <p className="bg-green-200 text-green-600 rounded-md gap-1 px-1 text-xs flex items-center">
                     <TbClockBolt className="text-lg text-pink-500" />{" "}
-                    {doc?.startDate}{" "}
+                    {dayjs(doc?.startDate)
+                      .tz(dayjs.tz.guess())
+                      .format("MMM DD, hh:mm:ss A")}
                   </p>
                   <p className="bg-green-200 text-green-600 rounded-md gap-1 px-1 text-xs flex items-center">
                     <TbClockCheck className="text-lg text-pink-500" />{" "}
-                    {doc?.completeDate}{" "}
+                    {dayjs(doc?.completeDate)
+                      .tz(dayjs.tz.guess())
+                      .format("MMM DD, hh:mm:ss A")}
                   </p>
                 </div>
               ) : type == "todo" ? (
@@ -101,7 +107,7 @@ const TaskCard = ({ doc, type = "todo", taskUpdater }: Props) => {
                     <TbClockPlus className="text-lg text-pink-500" />{" "}
                     {dayjs(doc?.createdAt)
                       .tz(dayjs.tz.guess())
-                      .format("DD-MM-YY hh:mm:ss A")}
+                      .format("MMM DD, hh:mm:ss A")}
                   </p>
                 </div>
               ) : null}
@@ -113,7 +119,7 @@ const TaskCard = ({ doc, type = "todo", taskUpdater }: Props) => {
             </p>
           </div>
           <Tooltip title="Edit">
-            <div className=" px-4 hover:cursor-pointer">
+            <div className=" px-4 hover:cursor-pointer" onClick={handelEdit}>
               <FaPen className="text-2xl text-center text-yellow-500" />
             </div>
           </Tooltip>
