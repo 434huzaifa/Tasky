@@ -67,7 +67,7 @@ const InProgressDiv = () => {
         )}
       </div>
     </Card>
-    <Updater id={id} isModalOpen={isModalOpen} singleTask={singleTask} handelModal={handelModal}></Updater>
+    <Updater type="in-progress" id={id} isModalOpen={isModalOpen} singleTask={singleTask} handelModal={handelModal}></Updater>
     </>
   );
 };

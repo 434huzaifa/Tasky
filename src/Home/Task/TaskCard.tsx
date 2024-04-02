@@ -62,8 +62,8 @@ const TaskCard = ({ doc, type = "todo", taskUpdater }: Props) => {
   return (
     <>
       <Card className={`font-roboto-slab mt-4 ${cardstyle}`} hoverable>
-        <div className="flex items-center">
-          <div className="flex-1">
+        <div className="flex items-center md:flex-row flex-col">
+          <div className="flex-none w-full md:flex-1">
             <div className=" flex gap-3">
               {type == "in-progress" ? (
                 <div className="flex gap-3 font-semibold">
@@ -113,13 +113,14 @@ const TaskCard = ({ doc, type = "todo", taskUpdater }: Props) => {
               ) : null}
             </div>
 
-            <p className="text-lg  font-bold">{doc?.title || ""}</p>
+            <p className="text-lg  font-bold ">{doc?.title || ""}</p>
             <p className="text-xs italic font-light text-black">
               {doc?.description || ""}
             </p>
           </div>
+          <div className="flex justify-center items-center">
           <Tooltip title="Edit">
-            <div className=" px-4 hover:cursor-pointer" onClick={handelEdit}>
+            <div className="hover:cursor-pointer border-r pr-3" onClick={handelEdit}>
               <FaPen className="text-2xl text-center text-yellow-500" />
             </div>
           </Tooltip>
@@ -127,7 +128,7 @@ const TaskCard = ({ doc, type = "todo", taskUpdater }: Props) => {
             <Tooltip title="Move to in progress">
               {" "}
               <div
-                className="border-l px-4 hover:cursor-pointer"
+                className="px-3 hover:cursor-pointer"
                 onClick={() => {
                   handelInProgress(doc?._id);
                 }}
@@ -138,7 +139,7 @@ const TaskCard = ({ doc, type = "todo", taskUpdater }: Props) => {
           ) : type == "in-progress" ? (
             <Tooltip title="Move to complete">
               <div
-                className="border-l px-4 hover:cursor-pointer"
+                className="hover:cursor-pointer  px-3 "
                 onClick={() => {
                   handelCompleted(doc?._id);
                 }}
@@ -160,12 +161,14 @@ const TaskCard = ({ doc, type = "todo", taskUpdater }: Props) => {
               icon={<MdDelete className="text-red-500 text-lg" />}
             >
               <Spin spinning={mutationDelete.isPending}>
-                <div className="border-l px-4 hover:cursor-pointer">
+                <div className="hover:cursor-pointer border-l pl-2">
                   <MdOutlineDeleteOutline className="text-3xl text-center text-red-500" />
                 </div>
               </Spin>
             </Popconfirm>
           </Tooltip>
+          </div>
+
         </div>
       </Card>
     </>

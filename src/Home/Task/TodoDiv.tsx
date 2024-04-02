@@ -67,7 +67,7 @@ const TodoDiv = () => {
 
       </div>
     </Card>
-    <Updater id={id} isModalOpen={isModalOpen} singleTask={singleTask} handelModal={handelModal}></Updater>
+    <Updater type="todo" id={id} isModalOpen={isModalOpen} singleTask={singleTask} handelModal={handelModal}></Updater>
     </>
   );
 };

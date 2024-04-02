@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import "./wavy.css"
 const Register = () => {
-    const rules = [{ required: true }];
+
     return (
         <div className=" justify-center flex items-center min-h-screen bg-wavy2">
       <Card className="w-96 pb-12 pt-6 backdrop-blur-md bg-opacity-0 bg-white">
@@ -12,12 +12,24 @@ const Register = () => {
             <span className="text-purple-800">Welcome,</span> To Tasky
           </p>
           <Form layout="vertical">
+          <Form.Item
+              name="name"
+              label="Name"
+              className="font-bold"
+              rules={[
+                { required: true },
+                
+              ]}
+              validateTrigger="onBlur"
+            >
+              <Input className="font-semibold font-roboto-slab"></Input>
+            </Form.Item>
             <Form.Item
               name="email"
               label="Email"
               className="font-bold"
               rules={[
-                ...rules,
+                { required: true },
                 {
                   type: "email",
                   message: "The input is not valid E-mail!",

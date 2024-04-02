@@ -68,7 +68,7 @@ const CompleteDiv = () => {
         )}
       </div>
     </Card>
-    <Updater id={id} isModalOpen={isModalOpen} singleTask={singleTask} handelModal={handelModal}></Updater>
+    <Updater type="completed" id={id} isModalOpen={isModalOpen} singleTask={singleTask} handelModal={handelModal}></Updater>
     </>
   );
 };

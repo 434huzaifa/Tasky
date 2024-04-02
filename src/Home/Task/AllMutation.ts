@@ -4,7 +4,7 @@ import ErrorResponse from "../../Utility/ErrorResponse";
 import { AxiosError } from "axios";
 import { useInProgress, useQueryCompleted, useQueryTodo } from "./AllQuery";
 import { useMutation } from "@tanstack/react-query";
-import { UpdateDoc } from './AllTypes';
+import { UpdateDoc } from "./AllTypes";
 import dayjs from "dayjs";
 export type FormDataType = {
   title: string;
@@ -79,33 +79,49 @@ export const useTaskUpdate = () => {
   });
 };
 
-export const useTaskFullUpdate=()=>{
+export const useTaskFullUpdate = () => {
   const caxios = useAxios();
   const queryTodo = useQueryTodo(5, 1, false);
   const querInProgress = useInProgress(5, 1, false);
   const queryCompleted = useQueryCompleted(5, 1, false);
   return useMutation({
-    mutationFn:async ({id,UpdateDoc,type}:{id:string|undefined,UpdateDoc:UpdateDoc,type:string})=>{
-      type
-      const res= await caxios.put(`/task/${id}`,UpdateDoc)
-      return res.data
+    mutationFn: async ({
+      id,
+      UpdateDoc,
+      type,
+    }: {
+      id: string | undefined;
+      UpdateDoc: UpdateDoc;
+      type: string;
+    }) => {
+      type;
+      const res = await caxios.put(`/task/${id}`, UpdateDoc);
+      return res.data;
     },
-    onSuccess:(data,variables)=>{
-      SuccessResponse(data)
-      if (variables.type=="todo") {
-        queryTodo.refetch()
-      }else if(variables.type=="in-progress"){
-        querInProgress.refetch()
-      }else if(variables.type=="completed"){
-        queryCompleted.refetch()
+    onSuccess: (data, variables) => {
+      SuccessResponse(data);
+      if (variables.type == "todo") {
+        queryTodo.refetch();
+      } else if (variables.type == "in-progress") {
+        querInProgress.refetch();
+      } else if (variables.type == "completed") {
+        queryCompleted.refetch();
+      }
+      if (variables.type != variables.UpdateDoc.status) {
+        if (variables.UpdateDoc.status == "todo") {
+          queryTodo.refetch();
+        } else if (variables.UpdateDoc.status == "in-progress") {
+          querInProgress.refetch();
+        } else if (variables.UpdateDoc.status == "completed") {
+          queryCompleted.refetch();
+        }
       }
     },
-    onError:(err:AxiosError)=>{
-      ErrorResponse(err)
-    }
-  })
-}
-
+    onError: (err: AxiosError) => {
+      ErrorResponse(err);
+    },
+  });
+};
 
 export const useTaskDelete = (type: string) => {
   const caxios = useAxios();
