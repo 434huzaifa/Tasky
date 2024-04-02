@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Card, Empty, Statistic } from "antd";
+import { Card, Statistic } from "antd";
 import CompleteDiv from "./Task/CompleteDiv";
 import InProgressDiv from "./Task/InProgressDiv";
 import TaskForm from "./Task/TaskForm";
@@ -13,7 +13,7 @@ const Home = () => {
     <div className="flex flex-col gap-7 mt-4">
       <div className="flex gap-4 justify-between">
         {quryHome.isSuccess ? (
-          quryHome.data.length != 0 ? (
+          (
             cardList.map((x) => {
               let prefix,title;
               if (x=="todo") {
@@ -43,8 +43,6 @@ const Home = () => {
                 </Card>
               );
             })
-          ) : (
-            <Empty></Empty>
           )
         ) : (
           <p className="text-lg italic text-red-300">Something Wrong</p>
