@@ -1,18 +1,43 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button, Card, Divider, Form, Input, Spin } from "antd";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./wavy.css";
+import { UserCredential, updateProfile } from "firebase/auth";
 import showToast from "../Utility/showToast";
 import useAuth from "../Hook/useAuth";
+import useAxios from "../Hook/useAxios";
 const Register = () => {
   const { createUser, changeLoading, loading } = useAuth();
+  const caxios = useAxios();
+  const navigate = useNavigate();
   function onFinish(values: any) {
     if (values.pass1 == values.pass2) {
-      createUser(values.email, values.pass1)
+      caxios
+        .post("/user", { email: values.email, name: values.name })
         .then(() => {
-          changeLoading(false);
+          createUser(values.email, values.pass1)
+            .then((res: UserCredential) => {
+              updateProfile(res.user, {
+                displayName: values.name,
+              })
+                .then(() => {
+                  changeLoading(false);
+                  showToast("success", "Account Created Successfully");
+                  navigate("/login");
+                })
+                .catch((err: any) => {
+                  changeLoading(false);
+                  showToast("error", err.message);
+                  console.log(err);
+                });
+            })
+            .catch((err: any) => {
+              changeLoading(false);
+              showToast("error", err.message);
+              console.log(err);
+            });
         })
-        .catch((err: any) => {
+        .catch((err) => {
           changeLoading(false);
           showToast("error", err.message);
           console.log(err);

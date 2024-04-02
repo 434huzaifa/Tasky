@@ -29,11 +29,7 @@ const CompleteDiv = () => {
     <>
     <Card
       className="bg-orange-100"
-      loading={
-        queryCompleted.isFetching ||
-        queryCompleted.isLoading ||
-        queryCompleted.isRefetching
-      }
+      
     >
       <div>
         <p className="text-xl underline underline-offset-8 font-roboto-slab font-bold text-center">

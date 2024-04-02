@@ -29,11 +29,7 @@ const InProgressDiv = () => {
     <>
     <Card
       className="bg-orange-100"
-      loading={
-        queryInProgress.isFetching ||
-        queryInProgress.isLoading ||
-        queryInProgress.isRefetching
-      }
+      
     >
       <div>
         <p className="text-xl underline underline-offset-8 font-roboto-slab font-bold text-center">

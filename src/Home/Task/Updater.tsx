@@ -32,7 +32,6 @@ const Updater = ({ handelModal, isModalOpen, singleTask, id, type }: Props) => {
       label: "In Progress",
     });
   }
-  console.log("~ selectValue", selectValue);
   function convertFormValuesToUpdateDoc(formValues: FormValues): UpdateDoc {
     const updateDoc: UpdateDoc = {
       title: formValues.title,

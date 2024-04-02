@@ -10,6 +10,7 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
+
 } from "firebase/auth";
 import app from "../Firebase/firebase.config";
 import useAxios from "../Hook/useAxios";
@@ -20,6 +21,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const caxios = useAxios();
+ 
   const googleSignIn = () => {
     setLoading(true);
     return signInWithPopup(auth, googleProvider);
@@ -40,7 +42,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     return signInWithEmailAndPassword(auth, email, password);
   };
-  const assignJWT = (email: string) => {
+  const assignJWT = (email: string | null) => {
     setLoading(true);
     return caxios.post("/jsonwebtoken", { email });
   };
@@ -48,22 +50,30 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     return caxios.post("/logout");
   };
-  const changeLoading=async (value:boolean)=>{
-    await setLoading(value)
-  }
+  const changeLoading = async (value: boolean) => {
+    await setLoading(value);
+  };
   useEffect(() => {
     const unSubscribe = onAuthStateChanged(
       auth,
       (currentUser) => {
         setUser(currentUser);
         if (currentUser && currentUser.email) {
-          assignJWT(currentUser.email)
-            .then(() => {})
-            .catch(async (err) => {
-              await logOut();
-              setLoading(false);
-              console.log("assignJWT~", err);
-              window.location.href="/login"
+          caxios
+            .get(`/user?mail=${currentUser.email}`)
+            .then(() => {
+              assignJWT(currentUser.email)
+                .then(() => {
+                  changeLoading(false);
+                })
+                .catch(async (err: any) => {
+                  await logOut();
+                  changeLoading(false);
+                  console.log("assignJWT~", err);
+                });
+            })
+            .catch((err) => {
+              console.log(err);
             });
         } else {
           logoutJWT()
@@ -94,7 +104,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser,
     changeLoading,
     assignJWT,
-    logoutJWT
+    logoutJWT,
   };
 
   return (

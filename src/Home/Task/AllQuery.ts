@@ -13,7 +13,6 @@ export const useQueryTodo = (limit=5,page=1,enable=true) => {
       const res = await caxios.get(
         `/tasks?limit=${limit}&page=${page}&status=todo`
       );
-      console.log(res);
       return res.data as Response;
     },
     enabled:enable,
@@ -49,3 +48,16 @@ export const useQueryCompleted = (limit=5,page=1,enable=true) => {
     enabled:enable,
   });
 };
+
+export const useStatistic=(enable=true)=>{
+  const caxios = useAxios();
+  const { user } = useAuth();
+  return useQuery({
+    queryKey:[user.email,"home"],
+    queryFn:async()=>{
+      const res = await caxios.get("/home")
+      return res.data
+    },
+    enabled:enable,
+  })
+}

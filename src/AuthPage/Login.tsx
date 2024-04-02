@@ -5,52 +5,17 @@ import { FcGoogle } from "react-icons/fc";
 import "./wavy.css";
 import showToast from "../Utility/showToast";
 import useAuth from "../Hook/useAuth";
-import { UserCredential } from "firebase/auth";
 import useAxios from "../Hook/useAxios";
-import { useMutation } from "@tanstack/react-query";
-import SuccessResponse from "../Utility/SuccessResponse";
-import ErrorResponse from "../Utility/ErrorResponse";
-import { AxiosError } from "axios";
+import { UserCredential } from "firebase/auth";
 const Login = () => {
   const navigate = useNavigate();
-  const { signIn, googleSignIn, loading, changeLoading, assignJWT, logOut } =
-    useAuth();
+  const { signIn, googleSignIn, loading, changeLoading } = useAuth();
   const caxios = useAxios();
-  const mutationUserCreateOrCheck = useMutation({
-    mutationFn: async (data: { email: string; name: string }) => {
-      const res = await caxios.post("/user", data);
-      return res.data;
-    },
-    onSuccess: (data) => {
-      changeLoading(false);
-      SuccessResponse(data);
-      navigate("/");
-    },
-    onError: (err: AxiosError) => {
-      changeLoading(false);
-      ErrorResponse(err);
-    },
-  });
   function onFinish(value: { email: string; pass: string }) {
     signIn(value.email, value.pass)
-      .then(async (res: UserCredential) => {
-        if (res.user.email && res.user.displayName) {
-          await mutationUserCreateOrCheck.mutateAsync({
-            email: res.user.email,
-            name: res.user.displayName,
-          });
-          assignJWT(res.user.email)
-            .then(() => {
-              changeLoading(false);
-            })
-            .catch(async (err: any) => {
-              await logOut();
-              changeLoading(false);
-              console.log("assignJWT~", err);
-              console.log(err.message);
-              navigate("/login");
-            });
-        }
+      .then(async () => {
+        changeLoading(false);
+        navigate("/");
       })
       .catch((err: any) => {
         console.log(err);
@@ -61,22 +26,16 @@ const Login = () => {
   function handelGoogleLogin() {
     googleSignIn()
       .then(async (res: UserCredential) => {
-        if (res.user.email && res.user.displayName) {
-          await mutationUserCreateOrCheck.mutateAsync({
-            email: res.user.email,
-            name: res.user.displayName,
+        caxios
+          .post("/user", { email: res.user.email, name: res.user.displayName })
+          .then(() => {
+            navigate("/");
+          })
+          .catch((err: any) => {
+            console.log(err);
+            changeLoading(false);
+            showToast("error", err.message);
           });
-          assignJWT(res.user.email)
-            .then(() => {
-              changeLoading(false);
-            })
-            .catch(async (err: any) => {
-              await logOut();
-              changeLoading(false);
-              console.log("assignJWT~", err);
-              navigate("/login");
-            });
-        }
       })
       .catch((err: any) => {
         console.log(err);

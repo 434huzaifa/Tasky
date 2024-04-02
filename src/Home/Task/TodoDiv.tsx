@@ -30,9 +30,7 @@ const TodoDiv = () => {
     <>
     <Card
       className="bg-orange-100"
-      loading={
-        queryTodo.isFetching || queryTodo.isLoading || queryTodo.isRefetching
-      }
+      
     >
       <div>
         <p className="text-xl underline underline-offset-8 font-roboto-slab font-bold text-center">

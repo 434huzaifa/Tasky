@@ -67,13 +67,14 @@ const TaskCard = ({ doc, type = "todo", taskUpdater }: Props) => {
             <div className=" flex gap-3">
               {type == "in-progress" ? (
                 <div className="flex gap-3 font-semibold">
-                  <p className="bg-cyan-200 text-cyan-600 rounded-md gap-1 px-1 text-xs flex items-center ">
+                  <p className="bg-cyan-200 text-cyan-600 rounded-md gap-1 px-1 text-xs flex items-center text-center">
                     <TbClockPlus className="text-lg text-pink-500" />{" "}
-                    {dayjs(doc?.createdAt)
+                    <span >{dayjs(doc?.createdAt)
                       .tz(dayjs.tz.guess())
-                      .format("MMM DD, hh:mm:ss A")}
+                      .format("MMM DD, hh:mm:ss A")}</span>
+                    
                   </p>
-                  <p className="bg-cyan-200 text-cyan-600 rounded-md gap-1 px-1 text-xs flex items-center">
+                  <p className="bg-cyan-200 text-cyan-600 rounded-md gap-1 px-1 text-xs flex items-center text-center">
                     <TbClockBolt className="text-lg text-pink-500" />{" "}
                     {dayjs(doc?.startDate)
                       .tz(dayjs.tz.guess())
@@ -82,19 +83,19 @@ const TaskCard = ({ doc, type = "todo", taskUpdater }: Props) => {
                 </div>
               ) : type == "completed" ? (
                 <div className="flex gap-3 font-semibold">
-                  <p className="bg-green-200 text-green-600 rounded-md gap-1 px-1 text-xs flex items-center">
+                  <p className="bg-green-200 text-green-600 rounded-md gap-1 px-1 text-xs flex items-center text-center">
                     <TbClockPlus className="text-lg text-pink-500" />{" "}
                     {dayjs(doc?.createdAt)
                       .tz(dayjs.tz.guess())
                       .format("MMM DD, hh:mm:ss A")}
                   </p>
-                  <p className="bg-green-200 text-green-600 rounded-md gap-1 px-1 text-xs flex items-center">
+                  <p className="bg-green-200 text-green-600 rounded-md gap-1 px-1 text-xs flex items-center text-center">
                     <TbClockBolt className="text-lg text-pink-500" />{" "}
                     {dayjs(doc?.startDate)
                       .tz(dayjs.tz.guess())
                       .format("MMM DD, hh:mm:ss A")}
                   </p>
-                  <p className="bg-green-200 text-green-600 rounded-md gap-1 px-1 text-xs flex items-center">
+                  <p className="bg-green-200 text-green-600 rounded-md gap-1 px-1 text-xs flex items-center text-center">
                     <TbClockCheck className="text-lg text-pink-500" />{" "}
                     {dayjs(doc?.completeDate)
                       .tz(dayjs.tz.guess())
@@ -103,7 +104,7 @@ const TaskCard = ({ doc, type = "todo", taskUpdater }: Props) => {
                 </div>
               ) : type == "todo" ? (
                 <div className="font-semibold">
-                  <p className="bg-sky-200 text-sky-600 rounded-md gap-1 px-1 text-xs flex items-center">
+                  <p className="bg-sky-200 text-sky-600 rounded-md gap-1 px-1 text-xs flex items-center text-center">
                     <TbClockPlus className="text-lg text-pink-500" />{" "}
                     {dayjs(doc?.createdAt)
                       .tz(dayjs.tz.guess())

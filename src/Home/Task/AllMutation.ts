@@ -2,7 +2,7 @@ import useAxios from "../../Hook/useAxios";
 import SuccessResponse from "../../Utility/SuccessResponse";
 import ErrorResponse from "../../Utility/ErrorResponse";
 import { AxiosError } from "axios";
-import { useInProgress, useQueryCompleted, useQueryTodo } from "./AllQuery";
+import { useInProgress, useQueryCompleted, useQueryTodo, useStatistic } from "./AllQuery";
 import { useMutation } from "@tanstack/react-query";
 import { UpdateDoc } from "./AllTypes";
 import dayjs from "dayjs";
@@ -14,6 +14,7 @@ export type FormDataType = {
 export const useInsertTask = () => {
   const caxios = useAxios();
   const queryTodo = useQueryTodo(5, 1, false);
+  const queryHome=useStatistic(false)
   return useMutation({
     mutationFn: async (data: FormDataType) => {
       const res = await caxios.post("/task", data);
@@ -21,6 +22,7 @@ export const useInsertTask = () => {
     },
     onSuccess: (data) => {
       queryTodo.refetch();
+      queryHome.refetch()
       SuccessResponse(data);
     },
     onError: (err: AxiosError) => {
@@ -34,6 +36,7 @@ export const useTaskUpdate = () => {
   const queryTodo = useQueryTodo(5, 1, false);
   const querInProgress = useInProgress(5, 1, false);
   const queryCompleted = useQueryCompleted(5, 1, false);
+  const queryHome=useStatistic(false)
   return useMutation({
     mutationFn: async ({
       id,
@@ -67,9 +70,11 @@ export const useTaskUpdate = () => {
       if (variables.who == "in-progress") {
         queryTodo.refetch();
         querInProgress.refetch();
+        queryHome.refetch()
       } else if (variables.who == "completed") {
         querInProgress.refetch();
         queryCompleted.refetch();
+        queryHome.refetch()
       }
       SuccessResponse(data);
     },
@@ -84,6 +89,7 @@ export const useTaskFullUpdate = () => {
   const queryTodo = useQueryTodo(5, 1, false);
   const querInProgress = useInProgress(5, 1, false);
   const queryCompleted = useQueryCompleted(5, 1, false);
+  const queryHome=useStatistic(false)
   return useMutation({
     mutationFn: async ({
       id,
@@ -116,6 +122,7 @@ export const useTaskFullUpdate = () => {
           queryCompleted.refetch();
         }
       }
+      queryHome.refetch()
     },
     onError: (err: AxiosError) => {
       ErrorResponse(err);
@@ -128,6 +135,7 @@ export const useTaskDelete = (type: string) => {
   const queryTodo = useQueryTodo(5, 1, false);
   const querInProgress = useInProgress(5, 1, false);
   const queryCompleted = useQueryCompleted(5, 1, false);
+  const queryHome=useStatistic(false)
   return useMutation({
     mutationFn: async (id: string | undefined) => {
       if (id) {
@@ -145,6 +153,7 @@ export const useTaskDelete = (type: string) => {
       } else if (type == "completed") {
         queryCompleted.refetch();
       }
+      queryHome.refetch()
       SuccessResponse(data);
     },
     onError: (err: AxiosError) => {

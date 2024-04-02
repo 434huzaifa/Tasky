@@ -8,6 +8,9 @@ export default {
     extend: {
       fontFamily:{
         "roboto-slab":["Roboto Slab","sans-serif"]
+      },
+      screens:{
+        '2md':{'max':'580px'}
       }
     },
   },
