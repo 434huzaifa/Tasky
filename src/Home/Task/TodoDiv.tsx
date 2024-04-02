@@ -1,33 +1,12 @@
 import { Card, Empty, Pagination } from "antd";
 import TaskCard from "./TaskCard";
-import useAuth from "../../Hook/useAuth";
-import { useQuery } from "@tanstack/react-query";
-import useAxios from "../../Hook/useAxios";
 import { useState } from "react";
-import { Response } from "./AllTypes";
-type Props={
-  refetcher:string | boolean | undefined
-  setRefetcher:React.Dispatch<React.SetStateAction<string | boolean | undefined>>
-}
-const TodoDiv = ({refetcher,setRefetcher}:Props) => {
-  const { user } = useAuth();
+import { useQueryTodo } from "./AllQuery";
+
+const TodoDiv = () => {
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(5);
-  const caxios = useAxios();
-  const queryTodo = useQuery({
-    queryKey: [user?.email, "todo"],
-    queryFn: async () => {
-      const res = await caxios.get(
-        `/tasks?limit=${limit}&page=${page}&status=todo`
-      );
-      return res.data as Response;
-    },
-    refetchOnWindowFocus: false,
-    retry: 2,
-  });
-  if (refetcher=="todo") {
-    queryTodo.refetch()
-  }
+  const queryTodo = useQueryTodo(page, limit);
   async function onChange(page: number, pageSize: number) {
     await setPage(page);
     await setLimit(pageSize);
@@ -49,7 +28,7 @@ const TodoDiv = ({refetcher,setRefetcher}:Props) => {
           {queryTodo.isSuccess ? (
             queryTodo.data.docs.length != 0 ? (
               queryTodo.data.docs.map((x) => {
-                return <TaskCard setRefetcher={setRefetcher} doc={x} type={"todo"}></TaskCard>;
+                return <TaskCard doc={x} type={"todo"}></TaskCard>;
               })
             ) : (
               <Empty></Empty>
@@ -61,7 +40,7 @@ const TodoDiv = ({refetcher,setRefetcher}:Props) => {
       </div>
       <div className="flex justify-end mt-2">
         <Pagination
-        current={page}
+          current={page}
           onChange={onChange}
           size="small"
           total={queryTodo.data?.totalDocs}

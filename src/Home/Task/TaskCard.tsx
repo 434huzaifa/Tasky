@@ -3,76 +3,18 @@ import { MdOutlineDeleteOutline } from "react-icons/md";
 import { TbClockDown } from "react-icons/tb";
 import { FaPen } from "react-icons/fa";
 import { TbClockCheck } from "react-icons/tb";
-import dayjs from "dayjs";
 import { MdDelete } from "react-icons/md";
-import { Doc, UpdateDoc } from "./AllTypes";
-import useAxios from "../../Hook/useAxios";
-import { useMutation } from "@tanstack/react-query";
+import { Doc } from "./AllTypes";
 import showToast from "../../Utility/showToast";
-import SuccessResponse from "../../Utility/SuccessResponse";
-import ErrorResponse from "../../Utility/ErrorResponse";
-import { AxiosError } from "axios";
+import { useTaskDelete, useTaskUpdate } from "./AllMutation";
 type Props = {
   doc?: Doc;
   type?: "todo" | "in-progress" | "completed";
-  setRefetcher: React.Dispatch<
-    React.SetStateAction<string | boolean | undefined>
-  >;
 };
 
-const TaskCard = ({ doc, type = "todo", setRefetcher }: Props) => {
-  const caxios = useAxios();
-  const mutationTaskUpdate = useMutation({
-    mutationFn: async ({
-      id,
-      who,
-    }: {
-      id: string;
-      who: "in-progress" | "completed";
-    }) => {
-      const data: UpdateDoc = {};
-      if (who == "in-progress") {
-        data.status = "in-progress";
-        data.startDate = dayjs().format("DD-MM-YY hh:mm:ss A");
-        setRefetcher("in-progress");
-      } else if (who == "completed") {
-        data.status = "completed";
-        data.completeDate = dayjs().format("DD-MM-YY hh:mm:ss A");
-        setRefetcher("completed");
-      }
-      if (Object.keys(data).length != 0) {
-        const res = await caxios.patch(`/task/${id}`, data);
-        return res.data;
-      } else {
-        throw "Empty Body";
-      }
-    },
-    onSuccess: (data) => {
-      SuccessResponse(data);
-    },
-    onError: (err: AxiosError) => {
-      ErrorResponse(err);
-    },
-    retry: 2,
-  });
-  const mutationDelete = useMutation({
-    mutationFn: async (id: string | undefined) => {
-      if (id) {
-        const res = await caxios.delete(`/task/${id}`);
-        setRefetcher(type);
-        return res.data;
-      } else {
-        throw "Undefine Id";
-      }
-    },
-    onSuccess: (data) => {
-      SuccessResponse(data);
-    },
-    onError: (err: AxiosError) => {
-      ErrorResponse(err);
-    },
-    retry: 2,
-  });
+const TaskCard = ({ doc, type = "todo" }: Props) => {
+  const mutationTaskUpdate = useTaskUpdate();
+  const mutationDelete = useTaskDelete(type);
   let cardstyle = "";
   if (type == "todo") {
     cardstyle = "bg-orange-200";
@@ -81,9 +23,8 @@ const TaskCard = ({ doc, type = "todo", setRefetcher }: Props) => {
   } else {
     cardstyle = "bg-cyan-200";
   }
-  const confirm = async (id: string | undefined) => { // work here
+  const confirm = async (id: string | undefined) => {
     await mutationDelete.mutateAsync(id);
-    console.log(id);
   };
   async function handelInProgress(id: string | undefined) {
     if (id) {
@@ -159,7 +100,7 @@ const TaskCard = ({ doc, type = "todo", setRefetcher }: Props) => {
             okText="Yes"
             cancelText="No"
             onConfirm={() => {
-              confirm(doc?._id,type);
+              confirm(doc?._id);
             }}
             okButtonProps={{ loading: false }}
             icon={<MdDelete className="text-red-500 text-lg" />}
